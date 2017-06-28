@@ -50,27 +50,30 @@ RUN apt-get -y update\
 && apt-get clean\
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+ENV GRAPHITE_VERSION 1.0.1
+ENV STATSD_VERSION v0.8.0
+
 # install graphite
-RUN git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
+RUN git clone -b ${GRAPHITE_VERSION} --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
 WORKDIR /usr/local/src/graphite-web
 RUN python ./setup.py install
 ADD conf/opt/graphite/conf/*.conf /opt/graphite/conf/
 ADD conf/opt/graphite/webapp/graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 ADD conf/opt/graphite/webapp/graphite/app_settings.py /opt/graphite/webapp/graphite/app_settings.py
-RUN python /opt/graphite/webapp/graphite/manage.py collectstatic --noinput
+RUN ls -l /opt/graphite/webapp; python /opt/graphite/webapp/manage.py collectstatic --noinput
 
 # install whisper
-RUN git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
+RUN git clone -b ${GRAPHITE_VERSION} --depth 1 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
 WORKDIR /usr/local/src/whisper
 RUN python ./setup.py install
 
 # install carbon
-RUN git clone -b 0.9.15 --depth 1 https://github.com/graphite-project/carbon.git /usr/local/src/carbon
+RUN git clone -b ${GRAPHITE_VERSION} --depth 1 https://github.com/graphite-project/carbon.git /usr/local/src/carbon
 WORKDIR /usr/local/src/carbon
 RUN python ./setup.py install
 
 # install statsd
-RUN git clone -b v0.7.2 https://github.com/etsy/statsd.git /opt/statsd
+RUN git clone -b ${STATSD_VERSION} https://github.com/etsy/statsd.git /opt/statsd
 ADD conf/opt/statsd/config.js /opt/statsd/config.js
 
 # config nginx
