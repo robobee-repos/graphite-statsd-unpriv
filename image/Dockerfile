@@ -31,24 +31,37 @@ RUN apt-get -y update\
  sqlite3\
  libcairo2\
  libcairo2-dev\
+ libffi-dev \
  python-cairo\
  python-rrdtool\
  pkg-config\
  nodejs \
  # extras
     rsync \
-    # supervisor
-  && pip install -U  pip setuptools \
-  && easy_install supervisor \
- # python dependencies
-&& pip install django==1.5.12\
- python-memcached==1.53\
- django-tagging==0.3.1\
- twisted==11.1.0\
- txAMQP==0.6.2 \
 # cleanup
 && apt-get clean\
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+RUN set -x \
+  # supervisor
+  && pip install -U  pip setuptools \
+  && easy_install supervisor
+
+RUN set -x \
+ # python dependencies
+&& pip install django==1.9.13\
+ python-memcached==1.58\
+ txAMQP==0.4\
+ simplejson==3.11.1\
+ django-tagging==0.4.3\
+ twisted==11.1.0\
+ pytz==2017.2\
+ pyparsing==2.2.0\
+ cairocffi==0.8.0\
+ git+https://github.com/graphite-project/whisper.git#egg=whisper\
+ git+https://github.com/graphite-project/ceres.git#egg=ceres\
+ scandir==1.5 \
+ pyCLI==devel
 
 ENV GRAPHITE_VERSION 1.0.1
 ENV STATSD_VERSION v0.8.0
@@ -60,7 +73,7 @@ RUN python ./setup.py install
 ADD conf/opt/graphite/conf/*.conf /opt/graphite/conf/
 ADD conf/opt/graphite/webapp/graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 ADD conf/opt/graphite/webapp/graphite/app_settings.py /opt/graphite/webapp/graphite/app_settings.py
-RUN ls -l /opt/graphite/webapp; python /opt/graphite/webapp/manage.py collectstatic --noinput
+WORKDIR /opt/graphite/webapp
 
 # install whisper
 RUN git clone -b ${GRAPHITE_VERSION} --depth 1 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
@@ -83,7 +96,9 @@ ADD conf/etc/nginx/sites-enabled/graphite-statsd.conf /etc/nginx/sites-enabled/g
 
 # init django admin
 ADD conf/usr/local/bin/django_admin_init.exp /usr/local/bin/django_admin_init.exp
-RUN /usr/local/bin/django_admin_init.exp
+RUN set -x \
+  && export PYTHONPATH=/opt/graphite/webapp \
+  && /usr/local/bin/django_admin_init.exp
 
 # logging support
 RUN mkdir -p /var/log/carbon /var/log/graphite /var/log/nginx
