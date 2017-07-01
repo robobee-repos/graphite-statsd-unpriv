@@ -50,8 +50,8 @@ RUN apt-get -y update\
 && apt-get clean\
  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ENV GRAPHITE_VERSION 1.0.1
-ENV STATSD_VERSION v0.8.0
+ENV GRAPHITE_VERSION 0.9.16
+ENV STATSD_VERSION v0.7.2
 
 # install graphite
 RUN git clone -b ${GRAPHITE_VERSION} --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
@@ -60,7 +60,7 @@ RUN python ./setup.py install
 ADD conf/opt/graphite/conf/*.conf /opt/graphite/conf/
 ADD conf/opt/graphite/webapp/graphite/local_settings.py /opt/graphite/webapp/graphite/local_settings.py
 ADD conf/opt/graphite/webapp/graphite/app_settings.py /opt/graphite/webapp/graphite/app_settings.py
-RUN ls -l /opt/graphite/webapp; python /opt/graphite/webapp/manage.py collectstatic --noinput
+RUN python /opt/graphite/webapp/graphite/manage.py collectstatic --noinput
 
 # install whisper
 RUN git clone -b ${GRAPHITE_VERSION} --depth 1 https://github.com/graphite-project/whisper.git /usr/local/src/whisper
