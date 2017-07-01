@@ -1,6 +1,6 @@
 REPOSITORY := erwin82
 NAME := graphite-statsd-unpriv
-VERSION ?= v0.9.16-r1
+VERSION ?= v0.9.16-r1-1
 
 build: _build ##@targets Builds the docker image.
 
