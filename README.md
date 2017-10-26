@@ -2,7 +2,7 @@
 
 ## Description
 
-The image is a fork of the hopsoft/graphite-statsd image and 
+The image is based on the hopsoft/graphite-statsd image and 
 lets the services run as the non-privileged user `www-data`.
 Furthermore, it adds the option to have a input directory for configuration
 files that can be used with Kubernetes Config Map.
