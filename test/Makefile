@@ -1,22 +1,24 @@
 include ../utils/Makefile.help
 include ../utils/Makefile.functions
 
-NAME := graphite-statsd-unpriv
-ROOT_DIR:=$(shell realpath root)
+NAME := graphite-statsd
 
-test: up ##@targets Starts the test containers.
+test: setup ##@targets Starts docker compose.
+	docker-compose -p $(NAME) -f test.yaml up
+.PHONY: test
 
-up:
-	export ROOT_DIR="$(ROOT_DIR)" \
-	&& docker-compose -p $(NAME) -f test.yaml up
-.PHONY: up
+rm:
+	docker-compose -p $(NAME) -f test.yaml stop
+.PHONY: rm
 
-stop:
-	export ROOT_DIR="$(ROOT_DIR)" \
-	&& docker-compose -p $(NAME) -f test.yaml stop
-.PHONY: stop
+clean: rm
+	docker-compose -p $(NAME) -f test.yaml rm -f
+	sudo rm -rf root
+.PHONY: clean
 
-clean: stop
-	export ROOT_DIR="$(ROOT_DIR)" \
-	&& docker-compose -p $(NAME) -f test.yaml rm
-.PHONY: stop
+setup:
+	mkdir -p root/graphite
+	mkdir -p root/statsd
+	sudo chmod o+rwX root/graphite
+	sudo chmod o+rwX root/statsd
+.PHONY: setup

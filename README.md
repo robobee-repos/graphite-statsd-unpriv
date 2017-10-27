@@ -2,10 +2,15 @@
 
 ## Description
 
-The image is based on the hopsoft/graphite-statsd image and 
+The image is based on the `graphite-project/docker-graphite-statsd` image and 
 lets the services run as the non-privileged user `www-data`.
 Furthermore, it adds the option to have a input directory for configuration
-files that can be used with Kubernetes Config Map.
+files that can be used with Kubernetes Config Map. Need to copy the whole
+Dockerfile code because the `docker-graphite-statsd`
+image is based on `phusion/baseimage` and is adding a lot of additional daemon
+related configuration that will be done by `supervisord` in this image.
+This docker image will also remove `nginx` because it should be in an external
+container.
 
 ## Environment Parameters
 
@@ -19,14 +24,14 @@ files that can be used with Kubernetes Config Map.
 
 | Port | Description |
 | ------------- | ----- |
-| 8080  | http |
+| 9000  | php-fpm |
 | 8873 | rsync daemon |
-| 2003 | "carbon receiver - plaintext":http://graphite.readthedocs.io/en/latest/feeding-carbon.html#the-plaintext-protocol |
-| 2004 | "carbon receiver - pickle":http://graphite.readthedocs.io/en/latest/feeding-carbon.html#the-pickle-protocol |
-| 2023 | "carbon aggregator - plaintext":http://graphite.readthedocs.io/en/latest/carbon-daemons.html#carbon-aggregator-py |
-| 2024 | "carbon aggregator - pickle":http://graphite.readthedocs.io/en/latest/carbon-daemons.html#carbon-aggregator-py |
-| 8125/udp | "statsd":https://github.com/etsy/statsd/blob/master/docs/server.md |
-| 8126 | "statsd admin":https://github.com/etsy/statsd/blob/v0.7.2/docs/admin_interface.md |
+| 2003 | "carbon receiver - plaintext":http://graphite.readthedocs.io/en/latest/feeding-carbon.html#the-plaintext-protocol" |
+| 2004 | "carbon receiver - pickle":http://graphite.readthedocs.io/en/latest/feeding-carbon.html#the-pickle-protocol" |
+| 2023 | "carbon aggregator - plaintext":http://graphite.readthedocs.io/en/latest/carbon-daemons.html#carbon-aggregator-py" |
+| 2024 | "carbon aggregator - pickle":http://graphite.readthedocs.io/en/latest/carbon-daemons.html#carbon-aggregator-py" |
+| 8125/udp | "statsd":https://github.com/etsy/statsd/blob/master/docs/server.md" |
+| 8126 | "statsd admin":https://github.com/etsy/statsd/blob/v0.7.2/docs/admin_interface.md" |
 
 ## Directories
 

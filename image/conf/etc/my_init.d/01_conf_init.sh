@@ -12,8 +12,9 @@ graphite_conf_dir_contents=$(find /opt/graphite/conf -mindepth 1 -print -quit)
 graphite_webapp_dir_contents=$(find /opt/graphite/webapp/graphite -mindepth 1 -print -quit)
 graphite_storage_dir_contents=$(find /opt/graphite/storage -mindepth 1 -print -quit)
 if [[ -z $graphite_dir_contents ]]; then
-  git clone -b ${GRAPHITE_VERSION} --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
+  # git clone -b 1.0.2 --depth 1 https://github.com/graphite-project/graphite-web.git /usr/local/src/graphite-web
   cd /usr/local/src/graphite-web && python ./setup.py install
+  cd /usr/local/src/carbon && python ./setup.py install
 fi
 if [[ -z $graphite_storage_dir_contents ]]; then
   /usr/local/bin/django_admin_init.exp
@@ -30,7 +31,7 @@ fi
 #  - /opt/statsd
 statsd_dir_contents=$(find /opt/statsd -mindepth 1 -print -quit)
 if [[ -z $statsd_dir_contents ]]; then
-  git clone -b ${STATSD_VERSION} https://github.com/etsy/statsd.git /opt/statsd
-  cp $conf_dir/opt/statsd/config.js /opt/statsd/config.js
+  git clone -b ${statsd_version} https://github.com/etsy/statsd.git /opt/statsd
+  cp $conf_dir/opt/statsd/config_${STATSD_INTERFACE}.js /opt/statsd/config.js
 fi
 
